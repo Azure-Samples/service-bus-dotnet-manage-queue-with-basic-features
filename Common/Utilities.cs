@@ -28,6 +28,8 @@ using Microsoft.WindowsAzure.Storage;
 using Renci.SshNet;
 using Microsoft.Azure.Management.ServiceBus.Fluent;
 using Microsoft.Azure.ServiceBus;
+using System.Threading;
+using System.Net.Http.Headers;
 
 namespace Microsoft.Azure.Management.Samples.Common
 {
@@ -425,25 +427,25 @@ namespace Microsoft.Azure.Management.Samples.Common
             .Append("\n\tCreated from virtual machine: ").Append(image.SourceVirtualMachineId);
 
             builder.Append("\n\tOS disk image: ")
-                    .Append("\n\t\tOperating system: ").Append(image.OsDiskImage.OsType)
-                    .Append("\n\t\tOperating system state: ").Append(image.OsDiskImage.OsState)
-                    .Append("\n\t\tCaching: ").Append(image.OsDiskImage.Caching)
-                    .Append("\n\t\tSize (GB): ").Append(image.OsDiskImage.DiskSizeGB);
+                    .Append("\n\t\tOperating system: ").Append(image.OSDiskImage.OsType)
+                    .Append("\n\t\tOperating system state: ").Append(image.OSDiskImage.OsState)
+                    .Append("\n\t\tCaching: ").Append(image.OSDiskImage.Caching)
+                    .Append("\n\t\tSize (GB): ").Append(image.OSDiskImage.DiskSizeGB);
             if (image.IsCreatedFromVirtualMachine)
             {
                 builder.Append("\n\t\tSource virtual machine: ").Append(image.SourceVirtualMachineId);
             }
-            if (image.OsDiskImage.ManagedDisk != null)
+            if (image.OSDiskImage.ManagedDisk != null)
             {
-                builder.Append("\n\t\tSource managed disk: ").Append(image.OsDiskImage.ManagedDisk.Id);
+                builder.Append("\n\t\tSource managed disk: ").Append(image.OSDiskImage.ManagedDisk.Id);
             }
-            if (image.OsDiskImage.Snapshot != null)
+            if (image.OSDiskImage.Snapshot != null)
             {
-                builder.Append("\n\t\tSource snapshot: ").Append(image.OsDiskImage.Snapshot.Id);
+                builder.Append("\n\t\tSource snapshot: ").Append(image.OSDiskImage.Snapshot.Id);
             }
-            if (image.OsDiskImage.BlobUri != null)
+            if (image.OSDiskImage.BlobUri != null)
             {
-                builder.Append("\n\t\tSource un-managed vhd: ").Append(image.OsDiskImage.BlobUri);
+                builder.Append("\n\t\tSource un-managed vhd: ").Append(image.OSDiskImage.BlobUri);
             }
             if (image.DataDiskImages != null)
             {
@@ -550,26 +552,26 @@ namespace Microsoft.Azure.Management.Samples.Common
                 }
             }
             StringBuilder osProfile;
-            if (virtualMachine.OsProfile != null)
+            if (virtualMachine.OSProfile != null)
             {
                 osProfile = new StringBuilder().Append("\n\tOSProfile: ");
 
-                osProfile.Append("\n\t\tComputerName:").Append(virtualMachine.OsProfile.ComputerName);
-                if (virtualMachine.OsProfile.WindowsConfiguration != null)
+                osProfile.Append("\n\t\tComputerName:").Append(virtualMachine.OSProfile.ComputerName);
+                if (virtualMachine.OSProfile.WindowsConfiguration != null)
                 {
                     osProfile.Append("\n\t\t\tWindowsConfiguration: ");
                     osProfile.Append("\n\t\t\t\tProvisionVMAgent: ")
-                            .Append(virtualMachine.OsProfile.WindowsConfiguration.ProvisionVMAgent);
+                            .Append(virtualMachine.OSProfile.WindowsConfiguration.ProvisionVMAgent);
                     osProfile.Append("\n\t\t\t\tEnableAutomaticUpdates: ")
-                            .Append(virtualMachine.OsProfile.WindowsConfiguration.EnableAutomaticUpdates);
+                            .Append(virtualMachine.OSProfile.WindowsConfiguration.EnableAutomaticUpdates);
                     osProfile.Append("\n\t\t\t\tTimeZone: ")
-                            .Append(virtualMachine.OsProfile.WindowsConfiguration.TimeZone);
+                            .Append(virtualMachine.OSProfile.WindowsConfiguration.TimeZone);
                 }
-                if (virtualMachine.OsProfile.LinuxConfiguration != null)
+                if (virtualMachine.OSProfile.LinuxConfiguration != null)
                 {
                     osProfile.Append("\n\t\t\tLinuxConfiguration: ");
                     osProfile.Append("\n\t\t\t\tDisablePasswordAuthentication: ")
-                            .Append(virtualMachine.OsProfile.LinuxConfiguration.DisablePasswordAuthentication);
+                            .Append(virtualMachine.OSProfile.LinuxConfiguration.DisablePasswordAuthentication);
                 }
             }
             else
@@ -597,7 +599,7 @@ namespace Microsoft.Azure.Management.Samples.Common
                     .ToString());
         }
 
-        public static void PrintStorageAccountKeys(IList<StorageAccountKey> storageAccountKeys)
+        public static void PrintStorageAccountKeys(IReadOnlyList<StorageAccountKey> storageAccountKeys)
         {
             foreach (var storageAccountKey in storageAccountKeys)
             {
@@ -1515,7 +1517,7 @@ namespace Microsoft.Azure.Management.Samples.Common
             }
         }
 
-        public static void UploadFileToFtp(IPublishingProfile profile, string filePath)
+        public static void UploadFileToFtp(IPublishingProfile profile, string filePath, string fileName = null)
         {
             if (!IsRunningMocked)
             {
@@ -1530,9 +1532,36 @@ namespace Microsoft.Azure.Management.Samples.Common
                 {
                     var fileinfo = new FileInfo(filePath);
                     ftpClient.LoginAsync().GetAwaiter().GetResult();
-                    ftpClient.ChangeWorkingDirectoryAsync("./site/wwwroot/webapps").GetAwaiter().GetResult();
+                    if (!ftpClient.ListDirectoriesAsync().GetAwaiter().GetResult().Any(fni => fni.Name == "site"))
+                    {
+                        ftpClient.CreateDirectoryAsync("site").GetAwaiter().GetResult();
+                    }
+                    ftpClient.ChangeWorkingDirectoryAsync("./site").GetAwaiter().GetResult();
+                    if (!ftpClient.ListDirectoriesAsync().GetAwaiter().GetResult().Any(fni => fni.Name == "wwwroot"))
+                    {
+                        ftpClient.CreateDirectoryAsync("wwwroot").GetAwaiter().GetResult();
+                    }
+                    ftpClient.ChangeWorkingDirectoryAsync("./wwwroot").GetAwaiter().GetResult();
+                    if (!ftpClient.ListDirectoriesAsync().GetAwaiter().GetResult().Any(fni => fni.Name == "webapps"))
+                    {
+                        ftpClient.CreateDirectoryAsync("webapps").GetAwaiter().GetResult();
+                    }
+                    ftpClient.ChangeWorkingDirectoryAsync("./webapps").GetAwaiter().GetResult();
 
-                    using (var writeStream = ftpClient.OpenFileWriteStreamAsync(Path.GetFileName(filePath)).GetAwaiter().GetResult())
+                    if (fileName == null)
+                    {
+                        fileName = Path.GetFileName(filePath);
+                    }
+                    while (fileName.Contains("/"))
+                    {
+                        int slash = fileName.IndexOf("/");
+                        string subDir = fileName.Substring(0, slash);
+                        ftpClient.CreateDirectoryAsync(subDir).GetAwaiter().GetResult();
+                        ftpClient.ChangeWorkingDirectoryAsync("./" + subDir);
+                        fileName = fileName.Substring(slash + 1);
+                    }
+
+                    using (var writeStream = ftpClient.OpenFileWriteStreamAsync(fileName).GetAwaiter().GetResult())
                     {
                         var fileReadStream = fileinfo.OpenRead();
                         fileReadStream.CopyToAsync(writeStream).GetAwaiter().GetResult();
@@ -1586,7 +1615,7 @@ namespace Microsoft.Azure.Management.Samples.Common
             }
         }
 
-        public static void DeployByGit(IPublishingProfile profile)
+        public static void DeployByGit(IPublishingProfile profile, string repository)
         {
             if (!IsRunningMocked)
             {
@@ -1597,7 +1626,7 @@ namespace Microsoft.Azure.Management.Samples.Common
                 string gitPushArgument = $"push https://{profile.GitUsername}:{profile.GitPassword}@{profile.GitUrl} master:master -f";
 
                 ProcessStartInfo info = new ProcessStartInfo(gitCommand, gitInitArgument);
-                info.WorkingDirectory = Path.Combine(ProjectPath, "Asset", "azure-samples-appservice-helloworld");
+                info.WorkingDirectory = Path.Combine(ProjectPath, "Asset", repository);
                 Process.Start(info).WaitForExit();
                 info.Arguments = gitAddArgument;
                 Process.Start(info).WaitForExit();
@@ -1608,7 +1637,7 @@ namespace Microsoft.Azure.Management.Samples.Common
             }
         }
         
-        public static string CheckAddress(string url)
+        public static string CheckAddress(string url, IDictionary<string, string> headers = null)
         {
             if (!IsRunningMocked)
             {
@@ -1616,7 +1645,14 @@ namespace Microsoft.Azure.Management.Samples.Common
                 {
                     using (var client = new HttpClient())
                     {
-                        return client.GetAsync(url).Result.ToString();
+                        if (headers != null)
+                        {
+                            foreach (var header in headers)
+                            {
+                                client.DefaultRequestHeaders.Add(header.Key, header.Value);
+                            }
+                        }
+                        return client.GetAsync(url).Result.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                     }
                 }
                 catch(Exception ex)
@@ -1628,29 +1664,44 @@ namespace Microsoft.Azure.Management.Samples.Common
             return "[Running in PlaybackMode]";
         }
 
-        public static void DeprovisionAgentInLinuxVM(string host, int port, string userName, string password)
+        public static string PostAddress(string url, string body, IDictionary<string, string> headers = null) 
         {
             if (!IsRunningMocked)
             {
                 try
                 {
-                    using (var sshClient = new SshClient(host, port, userName, password))
+                    using (var client = new HttpClient())
                     {
-                        Utilities.Log("Trying to de-provision: " + host);
-                        sshClient.Connect();
-                        var commandToExecute = "sudo waagent -deprovision+user --force";
-                        using (var command = sshClient.CreateCommand(commandToExecute))
+                        if (headers != null)
                         {
-                            var commandOutput = command.Execute();
-                            Utilities.Log(commandOutput);
+                            foreach (var header in headers)
+                            {
+                                client.DefaultRequestHeaders.Add(header.Key, header.Value);
+                            }
                         }
-                        sshClient.Disconnect();
+                        return client.PostAsync(url, new StringContent(body)).Result.ToString();
                     }
                 }
                 catch (Exception ex)
                 {
                     Utilities.Log(ex);
                 }
+            }
+
+            return "[Running in PlaybackMode]";
+        }
+
+        public static void DeprovisionAgentInLinuxVM(string host, int port, string userName, string password)
+        {
+            if (!IsRunningMocked)
+            {                
+                Console.WriteLine("Trying to de-provision: " + host);
+                Console.WriteLine("ssh connection status: " + TrySsh(
+                    host,
+                    port,
+                    userName,
+                    password,
+                    "sudo waagent -deprovision+user --force"));
             }
         }
 
@@ -1714,6 +1765,56 @@ namespace Microsoft.Azure.Management.Samples.Common
                 {
                 }
             }
+        }
+
+        private static string TrySsh(
+            string host,
+            int port,
+            string userName,
+            string password,
+            string commandToExecute)
+        {
+            string commandOutput = null;
+            var backoffTime = 30 * 1000;
+            var retryCount = 3;
+
+            while (retryCount > 0)
+            {
+                using (var sshClient = new SshClient(host, port, userName, password))
+                {
+                    try
+                    {
+                        sshClient.Connect();
+                        if (commandToExecute != null)
+                        {
+                            using (var command = sshClient.CreateCommand(commandToExecute))
+                            {
+                                commandOutput = command.Execute();
+                            }
+                        }
+                        break;
+                    }
+                    catch (Exception exception)
+                    {
+                        retryCount--;
+                        if (retryCount == 0)
+                        {
+                            throw exception;
+                        }
+                    }
+                    finally
+                    {
+                        try
+                        {
+                            sshClient.Disconnect();
+                        }
+                        catch { }
+                    }
+                }
+                Thread.Sleep(backoffTime);
+            }
+
+            return commandOutput;
         }
     }
 }

@@ -7,7 +7,7 @@
 
   <Import Project="$(VSToolsPath)\DotNet\Microsoft.DotNet.Props" Condition="'$(VSToolsPath)' != ''" />
   <PropertyGroup Label="Globals">
-    <ProjectGuid>79270a9d-6d1a-4dd1-ae9a-8fe1d4f3aebd</ProjectGuid>
+    <ProjectGuid>f96e6bc4-02ed-4028-873d-01cde5000bc3</ProjectGuid>
     <RootNamespace>ServiceBusQueueBasic</RootNamespace>
     <BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)'=='' ">.\obj</BaseIntermediateOutputPath>
     <OutputPath Condition="'$(OutputPath)'=='' ">.\bin\</OutputPath>
