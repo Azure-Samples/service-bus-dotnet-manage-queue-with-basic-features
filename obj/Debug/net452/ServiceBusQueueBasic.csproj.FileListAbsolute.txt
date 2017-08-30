@@ -1,0 +1,4 @@
+C:\Sources\dotnet-samples\service-bus-dotnet-manage-queue-with-basic-features\bin\Debug\net452\ServiceBusQueueBasic.runtimeconfig.json
+C:\Sources\dotnet-samples\service-bus-dotnet-manage-queue-with-basic-features\bin\Debug\net452\ServiceBusQueueBasic.runtimeconfig.dev.json
+C:\Sources\dotnet-samples\service-bus-dotnet-manage-queue-with-basic-features\obj\Debug\net452\ServiceBusQueueBasic.csproj.ServiceBusQueueBasic.exe.config
+C:\Sources\dotnet-samples\service-bus-dotnet-manage-queue-with-basic-features\obj\Debug\net452\ServiceBusQueueBasic.csproj.CoreCompileInputs.cache

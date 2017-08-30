@@ -1,0 +1,2 @@
+C:\Sources\dotnet-samples\service-bus-dotnet-manage-queue-with-basic-features\bin\Debug\netstandard1.6\ServiceBusQueueBasic.deps.json
+C:\Sources\dotnet-samples\service-bus-dotnet-manage-queue-with-basic-features\obj\Debug\netstandard1.6\ServiceBusQueueBasic.csproj.CoreCompileInputs.cache
