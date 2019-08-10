@@ -1,4 +1,7 @@
 ---
+page_type: sample
+languages: java
+products: azure
 services: Service-Bus
 platforms: dotnet
 author: yaohaizh
