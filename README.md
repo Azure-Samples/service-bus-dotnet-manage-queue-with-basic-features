@@ -1,7 +1,9 @@
 ---
 page_type: sample
-languages: java
-products: azure
+languages:
+- java
+products:
+- azure
 services: Service-Bus
 platforms: dotnet
 author: yaohaizh
@@ -33,9 +35,9 @@ Set the environment variable `AZURE_AUTH_LOCATION` with the full path for an aut
     git clone https://github.com/Azure-Samples/service-bus-dotnet-manage-queue-with-basic-features.git
 
     cd service-bus-dotnet-manage-queue-with-basic-features
-  
+
     dotnet build
-    
+
     bin\Debug\net452\ServiceBusQueueBasic.exe
 
 ## More information ##
