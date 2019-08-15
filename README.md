@@ -4,26 +4,26 @@ languages:
 - csharp
 products:
 - azure
-services: Service-Bus
-platforms: dotnet
-author: yaohaizh
+extensions:
+- services: Service-Bus
+- platforms: dotnet
 ---
 
 # Getting started on managing Service Bus Queues with basic features in C# #
 
-          Azure Service Bus basic scenario sample.
-          - Create namespace with a queue.
-          - Add another queue in same namespace.
-          - Update Queue.
-          - Update namespace
-          - List namespaces
-          - List queues
-          - Get default authorization rule.
-          - Regenerate the keys in the authorization rule.
-          - Get the keys from authorization rule to connect to queue.
-          - Send a "Hello" message to queue using Data plan sdk for Service Bus.
-          - Delete queue
-          - Delete namespace
+ Azure Service Bus basic scenario sample.
+ - Create namespace with a queue.
+ - Add another queue in same namespace.
+ - Update Queue.
+ - Update namespace
+ - List namespaces
+ - List queues
+ - Get default authorization rule.
+ - Regenerate the keys in the authorization rule.
+ - Get the keys from authorization rule to connect to queue.
+ - Send a "Hello" message to queue using Data plan sdk for Service Bus.
+ - Delete queue
+ - Delete namespace
 
 
 ## Running this Sample ##
