@@ -36,6 +36,7 @@ namespace ServiceBusQueueBasic
             var namespaceName = SdkContext.RandomResourceName("namespace", 20);
             var queue1Name = SdkContext.RandomResourceName("queue1_", 24);
             var queue2Name = SdkContext.RandomResourceName("queue2_", 24);
+
             try
             {
                 //============================================================
@@ -135,6 +136,7 @@ namespace ServiceBusQueueBasic
                 //=============================================================
                 // Send a message to queue.
                 Task.Run(() => Utilities.SendMessageToQueue(keys.PrimaryConnectionString, queue1Name, "Hello")).Wait();
+
                 //=============================================================
                 // Delete a queue and namespace
                 Utilities.Log("Deleting queue " + queue1Name + "in namespace " + namespaceName + "...");
@@ -147,8 +149,9 @@ namespace ServiceBusQueueBasic
                 {
                     azure.ServiceBusNamespaces.DeleteById(serviceBusNamespace.Id);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    Utilities.Log("Unexpected error occured: " + e.Message);
                 }
                 Utilities.Log("Deleted namespace " + namespaceName + "...");
             }
@@ -170,6 +173,7 @@ namespace ServiceBusQueueBasic
                 }
             }
         }
+
         public static void Main(string[] args)
         {
             try
