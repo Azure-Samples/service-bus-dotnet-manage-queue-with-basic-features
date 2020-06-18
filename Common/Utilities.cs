@@ -3110,31 +3110,33 @@ namespace Microsoft.Azure.Management.Samples.Common
             return Path.Combine(Utilities.ProjectPath, "Asset", certificateName);
         }
 
-        //public static void SendMessageToTopic(string connectionString, string topicName, string message)
-        //{
-        //    if (!IsRunningMocked)
-        //    {
-        //        try
-        //        {
-        //            var topicClient = new TopicClient(connectionString, topicName);
-        //            topicClient.SendAsync(new Message(Encoding.UTF8.GetBytes(message))).Wait();
-        //            topicClient.Close();
-        //        }
-        //        catch (Exception)
-        //        {
-        //        }
-        //    }
-        //}
-
-        public static async Task SendMessageToQueue(string connectionString, string queueName, string message)
+        public static void SendMessageToTopic(string connectionString, string topicName, string message)
         {
             if (!IsRunningMocked)
             {
                 try
                 {
-                    await using var client = new ServiceBusClient(connectionString);
+                    ServiceBusClient client = new ServiceBusClient(connectionString);
+                    var sender = client.CreateSender(topicName);
+
+                    sender.SendAsync(new ServiceBusMessage(Encoding.UTF8.GetBytes(message))).GetAwaiter().GetResult();
+                }
+                catch (Exception)
+                {
+                }
+            }
+        }
+
+        public static void SendMessageToQueue(string connectionString, string queueName, string message)
+        {
+            if (!IsRunningMocked)
+            {
+                try
+                {
+                    ServiceBusClient client = new ServiceBusClient(connectionString);
                     var sender = client.CreateSender(queueName);
-                    await sender.SendAsync(new ServiceBusMessage(Encoding.UTF8.GetBytes(message)));
+
+                    sender.SendAsync(new ServiceBusMessage(Encoding.UTF8.GetBytes(message))).GetAwaiter().GetResult();
                 }
                 catch (Exception)
                 {
