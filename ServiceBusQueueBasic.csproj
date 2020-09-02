@@ -18,7 +18,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.0.0-preview.2" />
+    <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.0.0-preview.6" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.6.0" />
     <PackageReference Include="Microsoft.Rest.ClientRuntime" Version="2.3.20" />
     <PackageReference Include="Microsoft.Azure.Management.Fluent" Version="1.30.0" />
     <PackageReference Include="Microsoft.Azure.KeyVault" Version="3.0.1" />
