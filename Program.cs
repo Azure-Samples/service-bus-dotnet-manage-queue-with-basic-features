@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-
 using Microsoft.Azure.Management.Fluent;
 using Microsoft.Azure.Management.ResourceManager.Fluent;
 using Microsoft.Azure.Management.ResourceManager.Fluent.Core;
@@ -10,7 +9,7 @@ using Microsoft.Azure.Management.ServiceBus.Fluent;
 using Microsoft.Azure.Management.ServiceBus.Fluent.Models;
 using System;
 using System.Linq;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace ServiceBusQueueBasic
 {
@@ -31,12 +30,13 @@ namespace ServiceBusQueueBasic
          * - Delete queue
          * - Delete namespace
          */
-        public static void RunSample(IAzure azure)
+        public static async Task RunSample(IAzure azure)
         {
             var rgName = SdkContext.RandomResourceName("rgSB01_", 24);
             var namespaceName = SdkContext.RandomResourceName("namespace", 20);
             var queue1Name = SdkContext.RandomResourceName("queue1_", 24);
             var queue2Name = SdkContext.RandomResourceName("queue2_", 24);
+
             try
             {
                 //============================================================
@@ -98,7 +98,7 @@ namespace ServiceBusQueueBasic
 
                 Utilities.Log("List of namespaces in resource group " + rgName + "...");
 
-                foreach (var serviceBusNamespace1  in  azure.ServiceBusNamespaces.ListByResourceGroup(rgName))
+                foreach (var serviceBusNamespace1 in azure.ServiceBusNamespaces.ListByResourceGroup(rgName))
                 {
                     Utilities.Print(serviceBusNamespace1);
                 }
@@ -135,7 +135,8 @@ namespace ServiceBusQueueBasic
 
                 //=============================================================
                 // Send a message to queue.
-                Utilities.SendMessageToQueue(keys.PrimaryConnectionString, queue1Name, "Hello");
+                await Utilities.SendMessageToQueueAsync(keys.PrimaryConnectionString, queue1Name, "Hello");
+
                 //=============================================================
                 // Delete a queue and namespace
                 Utilities.Log("Deleting queue " + queue1Name + "in namespace " + namespaceName + "...");
@@ -148,8 +149,9 @@ namespace ServiceBusQueueBasic
                 {
                     azure.ServiceBusNamespaces.DeleteById(serviceBusNamespace.Id);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    Utilities.Log("Unexpected error occured: " + e.Message);
                 }
                 Utilities.Log("Deleted namespace " + namespaceName + "...");
             }
@@ -171,7 +173,8 @@ namespace ServiceBusQueueBasic
                 }
             }
         }
-        public static void Main(string[] args)
+
+        public static async Task Main(string[] args)
         {
             try
             {
@@ -179,7 +182,7 @@ namespace ServiceBusQueueBasic
                 // Authenticate
                 var credentials = SdkContext.AzureCredentialsFactory.FromFile(Environment.GetEnvironmentVariable("AZURE_AUTH_LOCATION"));
 
-                var azure = Azure
+                var azure = Microsoft.Azure.Management.Fluent.Azure
                     .Configure()
                     .WithLogLevel(HttpLoggingDelegatingHandler.Level.Basic)
                     .Authenticate(credentials)
@@ -188,7 +191,7 @@ namespace ServiceBusQueueBasic
                 // Print selected subscription
                 Utilities.Log("Selected subscription: " + azure.SubscriptionId);
 
-                RunSample(azure);
+                await RunSample(azure);
             }
             catch (Exception e)
             {
