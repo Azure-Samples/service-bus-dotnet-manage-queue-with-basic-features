@@ -19,8 +19,8 @@
 
   <ItemGroup>
     <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.0.0-preview.6" />
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.6.0" />
-    <PackageReference Include="Microsoft.Rest.ClientRuntime" Version="2.3.20" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.7.0" />
+    <PackageReference Include="Microsoft.Rest.ClientRuntime" Version="2.3.22" />
     <PackageReference Include="Microsoft.Azure.Management.Fluent" Version="1.30.0" />
     <PackageReference Include="Microsoft.Azure.KeyVault" Version="3.0.1" />
     <PackageReference Include="CoreFTP" Version="1.2.0" />
@@ -28,7 +28,6 @@
     <PackageReference Include="SSH.NET" Version="2016.0.0" />
     <PackageReference Include="Docker.DotNet" Version="2.124.3" />
     <PackageReference Include="Docker.DotNet.X509" Version="2.124.3" />
-    <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
     <PackageReference Include="System.Data.SqlClient" Version="4.4.3" />
   </ItemGroup>
 
