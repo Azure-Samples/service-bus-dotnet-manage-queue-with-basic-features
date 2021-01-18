@@ -5,8 +5,8 @@ languages:
 products:
 - azure
 extensions:
-- services: Service-Bus
-- platforms: dotnet
+  services: Service-Bus
+  platforms: dotnet
 ---
 
 # Getting started on managing Service Bus Queues with basic features in C# #
